@@ -1,0 +1,5 @@
+{
+  "name": "Marketplace Ad Cloner",
+  "description": "An application that clones and optimizes marketplace ad listings from a URL using AI. It extracts the title, description, tags, and images, and then uses Gemini to enhance the content for better performance.",
+  "requestFramePermissions": []
+}
