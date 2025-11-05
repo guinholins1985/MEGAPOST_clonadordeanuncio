@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { AdContent, AppStatus } from './types';
+import { AdContent, AppStatus, Specification } from './types';
 import { extractAdContentFromUrl, optimizeAdContent } from './services/geminiService';
 import Spinner from './components/Spinner';
 import { SparklesIcon, ClipboardIcon } from './components/icons/Icons';
@@ -51,6 +51,15 @@ const App: React.FC = () => {
   
   const handleContentChange = <K extends keyof AdContent>(field: K, value: AdContent[K]) => {
     setAdContent(prev => prev ? { ...prev, [field]: value } : null);
+  };
+
+  const handleSpecificationChange = (index: number, field: 'key' | 'value', value: string) => {
+    setAdContent(prev => {
+        if (!prev || !prev.specifications) return prev;
+        const newSpecs = [...prev.specifications];
+        newSpecs[index] = { ...newSpecs[index], [field]: value };
+        return { ...prev, specifications: newSpecs };
+    });
   };
 
   const isProcessing = status === AppStatus.Extracting || status === AppStatus.Optimizing;
@@ -133,6 +142,90 @@ const App: React.FC = () => {
             </div>
 
             <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-5">
+              <div className="flex justify-between items-center mb-3">
+                  <h2 className="text-xl font-semibold text-gray-300">Marca</h2>
+                  <button onClick={() => handleCopyToClipboard(adContent.brand || '')} className="text-gray-400 hover:text-white transition"><ClipboardIcon /></button>
+              </div>
+              <input 
+                type="text" 
+                value={adContent.brand || ''} 
+                onChange={(e) => handleContentChange('brand', e.target.value)}
+                placeholder="Marca do produto"
+                className="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 text-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+              />
+            </div>
+            
+            <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-5">
+              <div className="flex justify-between items-center mb-3">
+                  <h2 className="text-xl font-semibold text-gray-300">Preço</h2>
+                  <button onClick={() => handleCopyToClipboard(adContent.price || '')} className="text-gray-400 hover:text-white transition"><ClipboardIcon /></button>
+              </div>
+              <input 
+                type="text" 
+                value={adContent.price || ''} 
+                onChange={(e) => handleContentChange('price', e.target.value)}
+                placeholder="Preço do produto"
+                className="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 text-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+              />
+            </div>
+            
+            <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-5">
+              <div className="flex justify-between items-center mb-3">
+                  <h2 className="text-xl font-semibold text-gray-300">Categoria</h2>
+                  <button onClick={() => handleCopyToClipboard(adContent.category || '')} className="text-gray-400 hover:text-white transition"><ClipboardIcon /></button>
+              </div>
+              <input 
+                type="text" 
+                value={adContent.category || ''} 
+                onChange={(e) => handleContentChange('category', e.target.value)}
+                placeholder="Categoria do produto"
+                className="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 text-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+              />
+            </div>
+            
+            <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-5">
+              <div className="flex justify-between items-center mb-3">
+                  <h2 className="text-xl font-semibold text-gray-300">Condição</h2>
+                  <button onClick={() => handleCopyToClipboard(adContent.condition || '')} className="text-gray-400 hover:text-white transition"><ClipboardIcon /></button>
+              </div>
+              <input 
+                type="text" 
+                value={adContent.condition || ''} 
+                onChange={(e) => handleContentChange('condition', e.target.value)}
+                placeholder="Condição do produto (ex: Novo, Usado)"
+                className="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 text-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+              />
+            </div>
+
+            <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-5">
+              <div className="flex justify-between items-center mb-3">
+                  <h2 className="text-xl font-semibold text-gray-300">SKU / Modelo</h2>
+                  <button onClick={() => handleCopyToClipboard(adContent.sku || '')} className="text-gray-400 hover:text-white transition"><ClipboardIcon /></button>
+              </div>
+              <input 
+                type="text" 
+                value={adContent.sku || ''} 
+                onChange={(e) => handleContentChange('sku', e.target.value)}
+                placeholder="SKU ou número do modelo"
+                className="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 text-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+              />
+            </div>
+
+            <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-5">
+              <div className="flex justify-between items-center mb-3">
+                  <h2 className="text-xl font-semibold text-gray-300">Disponibilidade</h2>
+                  <button onClick={() => handleCopyToClipboard(adContent.availability || '')} className="text-gray-400 hover:text-white transition"><ClipboardIcon /></button>
+              </div>
+              <input 
+                type="text" 
+                value={adContent.availability || ''} 
+                onChange={(e) => handleContentChange('availability', e.target.value)}
+                placeholder="Status do estoque"
+                className="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 text-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+              />
+            </div>
+
+            <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-5">
                <div className="flex justify-between items-center mb-3">
                   <h2 className="text-xl font-semibold text-gray-300">Descrição</h2>
                   <button onClick={() => handleCopyToClipboard(adContent.description)} className="text-gray-400 hover:text-white transition"><ClipboardIcon /></button>
@@ -143,6 +236,35 @@ const App: React.FC = () => {
                 className="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 h-48 resize-none text-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
               />
             </div>
+
+            {adContent.specifications && adContent.specifications.length > 0 && (
+              <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-5">
+                  <div className="flex justify-between items-center mb-4">
+                      <h2 className="text-xl font-semibold text-gray-300">Especificações</h2>
+                      <button onClick={() => handleCopyToClipboard(adContent.specifications?.map(s => `${s.key}: ${s.value}`).join('\n') || '')} className="text-gray-400 hover:text-white transition"><ClipboardIcon /></button>
+                  </div>
+                  <div className="space-y-3">
+                      {adContent.specifications.map((spec, index) => (
+                          <div key={index} className="flex flex-col sm:flex-row gap-2 items-center">
+                              <input
+                                  type="text"
+                                  value={spec.key}
+                                  onChange={(e) => handleSpecificationChange(index, 'key', e.target.value)}
+                                  placeholder="Característica"
+                                  className="w-full sm:w-1/3 bg-gray-900 border border-gray-600 rounded-lg p-2 text-gray-300 focus:ring-1 focus:ring-purple-500 focus:border-purple-500 outline-none"
+                              />
+                              <input
+                                  type="text"
+                                  value={spec.value}
+                                  onChange={(e) => handleSpecificationChange(index, 'value', e.target.value)}
+                                  placeholder="Valor"
+                                  className="w-full sm:w-2/3 bg-gray-900 border border-gray-600 rounded-lg p-2 text-gray-200 focus:ring-1 focus:ring-purple-500 focus:border-purple-500 outline-none"
+                              />
+                          </div>
+                      ))}
+                  </div>
+              </div>
+            )}
 
             <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-5">
                <div className="flex justify-between items-center mb-3">
